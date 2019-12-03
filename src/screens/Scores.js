@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,13 +7,30 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
+import * as _ from 'lodash';
 
 const Scores = (props) => {
 
-  const scores = [{name: 'John', score: 10},
-                  {name: 'Ringo', score: 20},
+  const scores = [{name: 'John', score: 40},
+                  {name: 'Ringo', score: 10},
                   {name: 'Paul', score: 30},
                   {name: 'George', score: 40}];
+
+  // sortScores = () => {
+  //   return _.orderBy(scores, ['score'], ['desc'])
+  // };
+
+  const [sorted, setOrder] = useState(false);
+
+  sortList = (list) => {
+    if (sorted == true) {
+      return _.orderBy(list, ['score'], ['desc'])
+    } else {
+      return scores
+    }
+  };
+
+  const sortedList = sortList(scores);
 
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: 'whitesmoke'}}>
@@ -22,13 +39,14 @@ const Scores = (props) => {
           Top Scores App
         </Text>
         <TouchableOpacity
-          style={styles.button}>
+          style={sorted ? styles.active : styles.button}
+          onPress={() => sorted ? setOrder(false) : setOrder(true)}>
           <Text style={styles.buttonText}>
             Sort
           </Text>
         </TouchableOpacity>
         <ScrollView>
-          {scores.map((score, index) => {
+          {sortedList.map((score, index) => {
             return(
               <View style={styles.score} key={index}>
                 <Text style={styles.textScore}>{score.name}</Text>
@@ -78,6 +96,13 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: 'blue',
     borderRadius: 5,
+  },
+  active: {
+    borderWidth: 1,
+    padding: 5,
+    borderColor: 'blue',
+    borderRadius: 5,
+    backgroundColor: 'lightblue'
   },
   buttonText: {
     fontSize: 20,
