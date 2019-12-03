@@ -5,9 +5,11 @@ import {
   ScrollView,
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  TextInput
 } from 'react-native';
 import * as _ from 'lodash';
+import Modal from "react-native-modal";
 
 const Scores = (props) => {
 
@@ -16,11 +18,8 @@ const Scores = (props) => {
                   {name: 'Paul', score: 30},
                   {name: 'George', score: 40}];
 
-  // sortScores = () => {
-  //   return _.orderBy(scores, ['score'], ['desc'])
-  // };
-
   const [sorted, setOrder] = useState(false);
+  const [isVisible, setVisible] = useState(false);
 
   sortList = (list) => {
     if (sorted == true) {
@@ -34,6 +33,46 @@ const Scores = (props) => {
 
   return(
     <SafeAreaView style={{flex: 1, backgroundColor: 'whitesmoke'}}>
+      <Modal isVisible={isVisible}>
+        <View style={styles.modal}>
+         <View style={styles.modalWindow}>
+          <Text style={[styles.textScore, {textAlign: 'center', fontWeight: 'bold'}]}>
+            Add a new entry
+          </Text>
+          <View style={styles.inputBox}>
+            <Text style={styles.textScore}>
+              Name:
+            </Text>
+            <TextInput
+              style={styles.inputText}/>
+          </View>
+          <View style={styles.inputBox}>
+            <Text style={styles.textScore}>
+              Score:
+            </Text>
+            <TextInput
+              keyboardType='numeric'
+              style={styles.inputText}/>
+          </View>
+          <View style={styles.buttonBox}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setVisible(false)}>
+              <Text style={styles.buttonText}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setVisible(false)}>
+              <Text style={styles.buttonText}>
+                Add
+              </Text>
+            </TouchableOpacity>
+          </View>
+         </View>
+        </View>
+      </Modal>
       <View style={styles.body}>
         <Text style={styles.title}>
           Top Scores App
@@ -59,7 +98,8 @@ const Scores = (props) => {
           Score not listed?
         </Text>
         <TouchableOpacity
-          style={styles.button}>
+          style={styles.button}
+          onPress={() => setVisible(true)}>
           <Text style={styles.buttonText}>
             Add
           </Text>
@@ -75,18 +115,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
+  modal: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputBox: {
+    marginTop: 10,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  buttonBox: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  inputText: {
+    height: 40,
+    width: '70%',
+    borderColor:'lightgray',
+    borderWidth: 1
+  },
+  modalWindow: {
+    backgroundColor: 'whitesmoke',
+    width: '80%',
+    borderRadius: 15,
+    padding: 20,
+  },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
     margin: 20,
   },
   score: {
-    width: 250,
+    width: 300,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    padding: 5
+    padding: 5,
+    borderColor: 'lightgray'
   },
   textScore: {
     fontSize: 20,
