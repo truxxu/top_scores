@@ -13,13 +13,13 @@ import Modal from "react-native-modal";
 
 const Scores = (props) => {
 
-  const scores = [{name: 'John', score: 40},
-                  {name: 'Ringo', score: 10},
-                  {name: 'Paul', score: 30},
-                  {name: 'George', score: 40}];
-
+  const [scores, setScore] = useState([{name: 'John', score: 40},
+                    {name: 'Ringo', score: 10},
+                    {name: 'Paul', score: 30},
+                    {name: 'George', score: 40}]);
   const [sorted, setOrder] = useState(false);
   const [isVisible, setVisible] = useState(false);
+  const [record, addRecord] = useState({name: '', score: null});
 
   sortList = (list) => {
     if (sorted == true) {
@@ -44,6 +44,8 @@ const Scores = (props) => {
               Name:
             </Text>
             <TextInput
+              onChangeText={text => addRecord({...record, name: text})}
+              value={record.name}
               style={styles.inputText}/>
           </View>
           <View style={styles.inputBox}>
@@ -51,20 +53,30 @@ const Scores = (props) => {
               Score:
             </Text>
             <TextInput
+              onChangeText={num => addRecord({...record, score: num})}
+              value={record.score}
               keyboardType='numeric'
               style={styles.inputText}/>
           </View>
           <View style={styles.buttonBox}>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => setVisible(false)}>
+              onPress={() => {
+                setVisible(false);
+                addRecord({name: '', score: ''})}}>
               <Text style={styles.buttonText}>
                 Cancel
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => setVisible(false)}>
+              onPress={() => {
+                setVisible(false);
+                console.log(scores);
+                scores.push({name: record.name, score: parseInt(record.score)});
+                console.log(scores);
+                addRecord({name: '', score: ''});
+              }}>
               <Text style={styles.buttonText}>
                 Add
               </Text>
@@ -94,7 +106,7 @@ const Scores = (props) => {
             )
           })}
         </ScrollView>
-        <Text style={styles.textScore}>
+        <Text style={[styles.textScore, {marginBottom: 20}]}>
           Score not listed?
         </Text>
         <TouchableOpacity
