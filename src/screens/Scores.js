@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,16 +10,28 @@ import {
 } from 'react-native';
 import * as _ from 'lodash';
 import Modal from "react-native-modal";
+import axios from 'axios';
 
 const Scores = (props) => {
 
-  const [scores, setScore] = useState([{name: 'John', score: 40},
-                    {name: 'Ringo', score: 10},
-                    {name: 'Paul', score: 30},
-                    {name: 'George', score: 40}]);
+  const [scores, setScore] = useState([]);
   const [sorted, setOrder] = useState(false);
   const [isVisible, setVisible] = useState(false);
   const [record, addRecord] = useState({name: '', score: null});
+
+  fetchData = () => {
+    axios.get('https://top-scores-api.herokuapp.com/users')
+      .then(response => {
+        setScore(response.data);
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  };
+
+  useEffect(() => {
+    fetchData()
+  }, []);
 
   sortList = (list) => {
     if (sorted == true) {
@@ -27,6 +39,10 @@ const Scores = (props) => {
     } else {
       return scores
     }
+  };
+
+  onSubmit = (payload) => {
+    axios.post('https://top-scores-api.herokuapp.com/users', payload)
   };
 
   const sortedList = sortList(scores);
@@ -72,10 +88,9 @@ const Scores = (props) => {
               style={styles.button}
               onPress={() => {
                 setVisible(false);
-                console.log(scores);
-                scores.push({name: record.name, score: parseInt(record.score)});
-                console.log(scores);
+                onSubmit({name: record.name, score: parseInt(record.score)})
                 addRecord({name: '', score: ''});
+                fetchData();
               }}>
               <Text style={styles.buttonText}>
                 Add
@@ -97,6 +112,10 @@ const Scores = (props) => {
           </Text>
         </TouchableOpacity>
         <ScrollView>
+          <View style={styles.score}>
+            <Text style={[styles.textScore, {fontWeight: 'bold'}]}>Name</Text>
+            <Text style={[styles.textScore, {fontWeight: 'bold'}]}>Score</Text>
+          </View>
           {sortedList.map((score, index) => {
             return(
               <View style={styles.score} key={index}>
@@ -149,7 +168,10 @@ const styles = StyleSheet.create({
     height: 40,
     width: '70%',
     borderColor:'lightgray',
-    borderWidth: 1
+    borderWidth: 1,
+    fontSize: 20,
+    padding: 0,
+    paddingLeft: 5,
   },
   modalWindow: {
     backgroundColor: 'whitesmoke',
